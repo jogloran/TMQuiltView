@@ -126,10 +126,22 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
         super.alwaysBounceVertical = YES;
         self.backgroundColor = [UIColor blackColor];
         [self addGestureRecognizer:self.tapGestureRecognizer];
+        self.tapGestureRecognizer.delegate = self;
         
         _numberOfColumms = kTMQuiltViewDefaultColumns;
     }
     return self;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    UIView* touchedView = touch.view;
+    // FIXME: fragile: relies on view hierarchy
+    while (touchedView != nil) {
+        if ([touchedView isKindOfClass: [UISearchBar class]]) return NO;
+        touchedView = touchedView.superview;
+    }
+    
+    return YES;
 }
 
 - (void)awakeFromNib {
